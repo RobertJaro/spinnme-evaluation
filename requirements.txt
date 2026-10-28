@@ -1,0 +1,2 @@
+spinnme[download,synthetic,wandb]
+cmasher

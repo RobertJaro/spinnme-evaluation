@@ -1,0 +1,83 @@
+path: "/glade/work/rjarolim/spinn_me/synthetic_validation/cadence30s-noiseless_v01"
+work_path: "/glade/derecho/scratch/rjarolim/cadence30s-noiseless_v01"
+
+data:
+  train_configs:
+    - type: fits
+      data_path: /glade/work/rjarolim/data/synthetic_validation/high_frequency/acquisitions/cadence30s-phase0s-noiseless/observed/frame_*.fits
+      axis_order: [stokes, wavelength, y, x]
+      stokes_order: IQUV
+      wavelength_unit: Angstrom
+      wavelength_grid_is_offsets: true
+      stokes_normalization: 1.0
+      instrument_id: CIRCULAR
+      line_id: fe-i-6173
+      time_reference: observation
+  valid_config:
+    type: fits
+    data_path: /glade/work/rjarolim/data/synthetic_validation/high_frequency/acquisitions/cadence30s-phase0s-noiseless/observed/frame_*.fits
+    axis_order: [stokes, wavelength, y, x]
+    stokes_order: IQUV
+    wavelength_unit: Angstrom
+    wavelength_grid_is_offsets: true
+    stokes_normalization: 1.0
+    instrument_id: CIRCULAR
+    line_id: fe-i-6173
+    time_reference: observation
+    sample_idx: 0
+  num_workers: 4
+  num_dataset_workers: 0
+  batch_size: 2048
+  dataset_batch_size: 512
+  seconds_per_dt: 180
+  gauss_per_dB: 1000
+  ref_time: '2025-01-01T00:00:00'
+
+instrument:
+  - type: generic
+    instrument_id: CIRCULAR
+    line_id: fe-i-6173
+    limb_correction: false
+    velocity_correction: false
+    artifact_correction: false
+
+logging:
+  project: spinnme
+  name: syn-30s-noiseless-v01
+  mode: online
+
+model:
+  type: mlp
+  dim: 64
+  n_layers: 3
+  vector_potential: false
+  activation: swish
+  source_function: independent
+  encoding_config:
+    type: positional_isotropic
+    num_frequencies: [128, 32]
+    min_frequencies: [0, 0]
+    max_frequencies: [12, 8]
+    include_input: true
+
+training:
+  epochs: -1
+  max_steps: 20000
+  check_val_every_n_epoch: null
+  val_check_interval: 1000
+  optimizer_config: {type: adamw}
+  lr_params: {start: 0.001, end: 0.0001, iterations: 20000}
+  compile_config:
+    me_solver: false
+  plot_validation: true
+  accelerator: auto
+  devices: 1
+
+normalization:
+  asinh_alphas: {Q: 0.001, U: 0.001, V: 0.001}
+
+stokes_loss:
+  type: mse
+  continuum_normalization: false
+
+weights: {I: 1.0, Q: 1.0, U: 1.0, V: 1.0}

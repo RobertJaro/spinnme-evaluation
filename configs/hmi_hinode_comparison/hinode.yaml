@@ -1,0 +1,113 @@
+path: /glade/work/rjarolim/spinn_me/hinode_sp_20240323_020035_v01
+work_path: /glade/derecho/scratch/rjarolim/hinode_sp_20240323_020035_v01
+data:
+  train_configs:
+  - type: hinode
+    data_path: /glade/work/rjarolim/data/hinode_stokes/20240323_020035
+    wavelength_center: 6301.5012
+    stokes_normalization: 1.0
+    instrument_id: HINODE_6301
+    line_id: fe-i-6301
+    time_reference: observation
+    wavelength_range: [6301.2012, 6301.8012]
+  - type: hinode
+    data_path: /glade/work/rjarolim/data/hinode_stokes/20240323_020035
+    wavelength_center: 6302.4931
+    stokes_normalization: 1.0
+    instrument_id: HINODE_6302
+    line_id: fe-i-6302
+    time_reference: observation
+    wavelength_range: [6302.1931, 6302.7931]
+  num_workers: 4
+  num_dataset_workers: 16
+  batch_size: 8192
+  dataset_batch_size: 512
+  seconds_per_dt: 36000
+  gauss_per_dB: 1000
+  valid_config:
+  - type: hinode
+    data_path: /glade/work/rjarolim/data/hinode_stokes/20240323_020035
+    wavelength_center: 6302.4931
+    stokes_normalization: 1.0
+    instrument_id: HINODE_6302
+    line_id: fe-i-6302
+    time_reference: observation
+    wavelength_range: [6302.1931, 6302.7931]
+    sample_idx: 0
+  - type: hinode
+    data_path: /glade/work/rjarolim/data/hinode_stokes/20240323_020035
+    wavelength_center: 6301.5012
+    stokes_normalization: 1.0
+    instrument_id: HINODE_6301
+    line_id: fe-i-6301
+    time_reference: observation
+    wavelength_range: [6301.2012, 6301.8012]
+    sample_idx: 0
+  ref_time: '2024-03-23T00:59:23'
+instrument:
+- type: hinode
+  instrument_id: HINODE_6301
+  limb_correction: false
+  velocity_correction: false
+  artifact_correction: false
+  line_id: fe-i-6301
+  spectral_response:
+    type: gaussian
+    fwhm: 0.0248
+    unit: Angstrom
+    samples: 9
+- type: hinode
+  instrument_id: HINODE_6302
+  limb_correction: false
+  velocity_correction: false
+  artifact_correction: false
+  line_id: fe-i-6302
+  spectral_response:
+    type: gaussian
+    fwhm: 0.0248
+    unit: Angstrom
+    samples: 9
+model:
+  type: mlp
+  dim: 512
+  n_layers: 8
+  vector_potential: false
+  source_function: ratio
+  activation: swish
+  encoding_config:
+    type: positional_isotropic
+    num_frequencies: [256, 32]
+    min_frequencies: [0, 0]
+    max_frequencies: [12, 4]
+    include_input: false
+training:
+  plot_validation: true
+  epochs: -1
+  max_steps: 200000
+  check_val_every_n_epoch: null
+  val_check_interval: 2000
+  lr_params:
+    start: 0.001
+    end: 0.0001
+    iterations: 200000.0
+  optimizer_config:
+    type: soap
+  compile_config:
+    me_solver: true
+    mode: default
+normalization:
+  asinh_alphas: null
+  stokes_scales: {I: 1.0, Q: 0.1, U: 0.1, V: 0.1}
+stokes_loss:
+  type: mse
+  continuum_normalization: true
+  continuum_quantile: 0.9
+weights:
+  I: 1.0
+  Q: 1.0
+  U: 1.0
+  V: 1.0
+logging:
+  project: spinnme
+  name: hinode_sp_20240323_020035_v01
+  mode: online

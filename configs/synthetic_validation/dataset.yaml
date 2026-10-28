@@ -1,0 +1,31 @@
+generation:
+  start_time: '2025-01-01T00:00:00'
+  duration_seconds: 1800
+  base_step_seconds: 5
+  evolution_seconds_per_step: 90
+  oscillation_period_seconds: 180
+  oscillation_amplitude_steps: 30
+  shape: [64, 64]
+  pattern_resolution: [180, 180]
+  tile_rows: 2
+  tile_cols: 4
+  observer:
+    longitude_deg: 0
+    latitude_deg: 0
+    distance_au: 1
+
+acquisition:
+  noise_model: gaussian
+  continuum_reference: 1.0
+  cadences_seconds: [5, 30, 90, 180, 720]
+  exposure_seconds: 5
+  phases_seconds: [0]
+  noise_levels:
+    - name: noiseless
+      std: 0
+    - name: optimistic
+      std: 0.0003
+    - name: nominal
+      std: 0.001
+    - name: challenging
+      std: 0.003

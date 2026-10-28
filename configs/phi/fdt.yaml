@@ -1,0 +1,81 @@
+# FDT v3 baseline: nominal Airy response, fixed filling factor, no learned corrections.
+path: /glade/work/rjarolim/spinn_me/phi/fdt_20240323_v01
+work_path: /glade/derecho/scratch/rjarolim/fdt_20240323_v01
+data:
+  train_configs:
+  - type: phi-fdt
+    data_path: /glade/work/rjarolim/data/phi_fdt/20240323_full_day/stokes
+    stokes_normalization: 1.0
+    instrument_id: PHI_FDT
+    line_id: fe-i-6173
+    time_reference: observation
+    mu_limit: 0.2
+  num_workers: 4
+  num_dataset_workers: 16
+  batch_size: 512
+  dataset_batch_size: 128
+  seconds_per_dt: 3600
+  gauss_per_dB: 1000
+  valid_config:
+    type: phi-fdt
+    data_path: /glade/work/rjarolim/data/phi_fdt/20240323_full_day/stokes
+    stokes_normalization: 1.0
+    instrument_id: PHI_FDT
+    line_id: fe-i-6173
+    time_reference: observation
+    sample_idx: 0
+    mu_limit: 0.2
+  ref_time: null
+instrument:
+- type: phi
+  instrument_id: PHI_FDT
+  limb_correction: false
+  velocity_correction: false
+  artifact_correction: false
+  line_id: fe-i-6173
+  spectral_response:
+    type: airy
+    unit: Angstrom
+    fwhm: 0.106
+    free_spectral_range: 3.01
+    samples: 161
+model:
+  type: mlp
+  dim: 128
+  n_layers: 4
+  vector_potential: false
+  activation: swish
+  encoding_config:
+    type: fourier
+    num_frequencies: [8, 8, 8, 4]
+    max_frequencies: [4096, 4096, 4096, 4]
+training:
+  plot_validation: true
+  epochs: -1
+  max_steps: 10000
+  check_val_every_n_epoch: null
+  val_check_interval: 1000
+  lr_params:
+    start: 0.001
+    end: 0.0001
+    iterations: 10000
+  optimizer_config:
+    type: soap
+normalization:
+  asinh_alphas:
+    Q: 0.01
+    U: 0.01
+    V: 0.01
+stokes_loss:
+  type: mse
+  continuum_normalization: true
+  continuum_quantile: 0.9
+weights:
+  I: 1.0
+  Q: 1.0
+  U: 1.0
+  V: 1.0
+logging:
+  project: spinnme
+  name: phi-fdt-v01
+  mode: online
